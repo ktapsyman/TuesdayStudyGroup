@@ -3,6 +3,7 @@ from lxml import html
 
 from Boards import *
 from PTTParser import *
+from NLP import *
 
 PTTBASEURL = "https://www.ptt.cc/"
 GOSSIPOVER18DATA = {'from':'/bbs/Gossiping/index.html', 'yes':'yes'}
@@ -27,10 +28,6 @@ def GetNLatestArticles(Board, NArticles=1000):
 		UrlPreviousPage = GetPreviousPageUrl(HtmlTree)
 		Url = PTTBASEURL + UrlPreviousPage
 	return ArticleList[:NArticles]
-
-def ConvertTitlesToVectors(TitleList):
-	#TODO
-	return None
 
 def Main():
 	Latest1000Gossips = GetNLatestArticles(GOSSIPING, NArticles=1000)
