@@ -19,7 +19,7 @@ def GetNLatestArticles(Board, NArticles=1000):
 		if Board == GOSSIPING:
 			Res = Session.post(PTTBASEURL+'ask/over18', data=GOSSIPOVER18DATA)
 		elif Board == SEX:
-			Session.post(PTTBASEURL+'/ask/over18', data=SEXOVER18DATA)
+			Session.post(PTTBASEURL+'ask/over18', data=SEXOVER18DATA)
 			
 		ArticlePage = Session.get(Url)
 		HtmlTree = html.fromstring(ArticlePage.content)
@@ -27,12 +27,21 @@ def GetNLatestArticles(Board, NArticles=1000):
 		# Go to previous page
 		UrlPreviousPage = GetPreviousPageUrl(HtmlTree)
 		Url = PTTBASEURL + UrlPreviousPage
-	return ArticleList[:NArticles]
+
+	ArticleList = ArticleList[:NArticles]
+	for Article in ArticleList:
+		ArticleUrl = PTTBASEURL + Article.ContentUrl
+		ArticleContentPage = Session.get(ArticleUrl)
+		HtmlTree = html.fromstring(ArticleContentPage.content)
+		Article.SetContent(ParseArticleContent(HtmlTree))
+		print(Article.Content)
+	return ArticleList
 
 def Main():
-	Latest1000Gossips = GetNLatestArticles(GOSSIPING, NArticles=1000)
+	Latest1000Gossips = GetNLatestArticles(GOSSIPING, NArticles=10)
 	for Article in Latest1000Gossips:
 		print(Article.Title)
 		print(Article.Meta.Author)
 		print(Article.Meta.PostDate)
+		print(Article.Content)
 Main()

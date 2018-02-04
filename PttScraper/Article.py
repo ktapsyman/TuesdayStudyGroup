@@ -12,6 +12,8 @@ class Article(object):
 	
 	def SetContent(self, Content):
 		self.Content = Content
+		return self
 	
 	def SetMeta(self, Meta):
 		self.Meta = Meta
+		return self

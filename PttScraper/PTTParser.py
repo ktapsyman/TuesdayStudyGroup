@@ -19,10 +19,10 @@ def ParseArticleList(Root):
 	print(len(ArticleNodes))
 	ArticleList = []
 	for ArticleNode in ArticleNodes:
-		Title = ArticleNode.xpath('div[@class="title"]/a')
+		Title = ArticleNode.xpath('div[@class="title"]/a/text()')
 		if IsNullNode(Title):
 			continue
-		Title = Title[0].text
+		Title = Title[0]
 		if "本文已被刪除" in Title:
 			continue
 
@@ -31,31 +31,41 @@ def ParseArticleList(Root):
 			continue
 		ArticleUrl = ArticleUrl[0].attrib['href']
 
-		Push = ArticleNode.xpath('div[@class="nrec"]/span')
+		Push = ArticleNode.xpath('div[@class="nrec"]/span/text()')
 		if IsNullNode(Push):
 			Push = 0
 		else:
-			Push = Push[0].text
+			Push = Push[0]
 
-		Mark = ArticleNode.xpath('div[@class="mark"]')
+		Mark = ArticleNode.xpath('div[@class="mark"]/text()')
 		if IsNullNode(Mark):
 			Mark = ""
 		else:
-			Mark = Mark[0].text
+			Mark = Mark[0]
 
-		Author = ArticleNode.xpath('div[@class="meta"]/div[1]')
+		Author = ArticleNode.xpath('div[@class="meta"]/div[1]/text()')
 		if IsNullNode(Author):
 			continue
-		Author = Author[0].text
+		Author = Author[0]
 
-		PostDate = ArticleNode.xpath('div[@class="meta"]/div[2]')
+		PostDate = ArticleNode.xpath('div[@class="meta"]/div[2]/text()')
 		if IsNullNode(PostDate):
 			continue
-		PostDate = PostDate[0].text
+		PostDate = PostDate[0]
 
 		ArticleList.append(Article(Title=Title, Meta=Meta(Author, PostDate), Push=Push, Mark=Mark, ContentUrl=ArticleUrl))
 	return ArticleList
 
 def ParseArticleContent(Root):
 	#TODO
-	return None
+	Path = '//div[@id="main-content"]/text()'
+
+	ArticleContentNode = Root.xpath(Path)
+	if IsNullNode(ArticleContentNode):
+		print("此文章無內文！")
+		return ""
+
+	print(ArticleContentNode)
+	ArticleContentText = ArticleContentNode[0]
+
+	return ArticleContentText
