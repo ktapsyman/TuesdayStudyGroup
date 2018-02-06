@@ -15,7 +15,6 @@ def GetNLatestArticles(Board, NArticles=1000):
 	ArticleList = []
 	Session = requests.session()
 	while len(ArticleList) < NArticles:
-		print(Url)
 		if Board == GOSSIPING:
 			Res = Session.post(PTTBASEURL+'ask/over18', data=GOSSIPOVER18DATA)
 		elif Board == SEX:
@@ -34,14 +33,14 @@ def GetNLatestArticles(Board, NArticles=1000):
 		ArticleContentPage = Session.get(ArticleUrl)
 		HtmlTree = html.fromstring(ArticleContentPage.content)
 		Article.SetContent(ParseArticleContent(HtmlTree))
-		print(Article.Content)
 	return ArticleList
 
 def Main():
-	Latest1000Gossips = GetNLatestArticles(GOSSIPING, NArticles=10)
+	Latest1000Gossips = GetNLatestArticles(GOSSIPING, NArticles=10000)
+	WordSet = []
 	for Article in Latest1000Gossips:
-		print(Article.Title)
-		print(Article.Meta.Author)
-		print(Article.Meta.PostDate)
-		print(Article.Content)
+		WordSet += CutSentenceIntoWords()
+	WordSet = set(WordSet)
+	TrainChineseWords(WordSet)
+
 Main()

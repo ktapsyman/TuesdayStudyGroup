@@ -16,7 +16,6 @@ def IsNullNode(Node):
 def ParseArticleList(Root):
 	Path = '//div[@class="r-ent"]'
 	ArticleNodes = Root.xpath(Path)
-	print(len(ArticleNodes))
 	ArticleList = []
 	for ArticleNode in ArticleNodes:
 		Title = ArticleNode.xpath('div[@class="title"]/a/text()')
@@ -65,7 +64,6 @@ def ParseArticleContent(Root):
 		print("此文章無內文！")
 		return ""
 
-	print(ArticleContentNode)
 	ArticleContentText = ArticleContentNode[0]
 
 	return ArticleContentText
