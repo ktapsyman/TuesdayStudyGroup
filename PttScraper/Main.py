@@ -9,22 +9,31 @@ PTTBASEURL = "https://www.ptt.cc/"
 GOSSIPOVER18DATA = {'from':'/bbs/Gossiping/index.html', 'yes':'yes'}
 SEXOVER18DATA = {'from':'/bbs/Sex/index.html', 'yes':'yes'}
 
-def GetNLatestArticles(Board, NArticles=1000):
+def GetArticles(Board, NArticles=1000, StartDate=None, EndDate=None):
 	#Since we want latest articles, scrape index first
 	Url = PTTBASEURL + Board + "/index.html"
 	ArticleList = []
 	Session = requests.session()
-	while len(ArticleList) < NArticles:
-		if Board == GOSSIPING:
-			Res = Session.post(PTTBASEURL+'ask/over18', data=GOSSIPOVER18DATA)
-		elif Board == SEX:
-			Session.post(PTTBASEURL+'ask/over18', data=SEXOVER18DATA)
-			
+	if Board == GOSSIPING:
+		Res = Session.post(PTTBASEURL+'ask/over18', data=GOSSIPOVER18DATA)
+	elif Board == SEX:
+		Session.post(PTTBASEURL+'ask/over18', data=SEXOVER18DATA)
+	while len(ArticleList) < NArticles:		
 		ArticlePage = Session.get(Url)
+		if 200 != ArticlePage.status_code:
+			#Retry
+			print(ArticlePage.status_code)
+			print("Retry")
+			print(len(ArticleList))
+			continue
 		HtmlTree = html.fromstring(ArticlePage.content)
 		ArticleList += ParseArticleList(HtmlTree)
+		print("Current progress : " + str(len(ArticleList)) + "/" + str(NArticles))
 		# Go to previous page
 		UrlPreviousPage = GetPreviousPageUrl(HtmlTree)
+		if "NOPREVPAGE" == UrlPreviousPage:
+			print(ArticleList[-1].Title)
+			exit()
 		Url = PTTBASEURL + UrlPreviousPage
 
 	ArticleList = ArticleList[:NArticles]
@@ -36,11 +45,16 @@ def GetNLatestArticles(Board, NArticles=1000):
 	return ArticleList
 
 def Main():
-	Latest1000Gossips = GetNLatestArticles(GOSSIPING, NArticles=10000)
+	Latest1000Gossips = GetArticles(GOSSIPING, NArticles=600000, StartDate=None, EndDate=None)
 	WordSet = []
 	for Article in Latest1000Gossips:
-		WordSet += CutSentenceIntoWords()
+		WordSet += CutSentenceIntoWords(Article.Title)
+		WordSet += CutSentenceIntoWords(Article.Content)
 	WordSet = set(WordSet)
-	TrainChineseWords(WordSet)
+
+	with open("./Vocabulary.txt", "w") as VocabularyFile:
+		VocabularyFile.write(" ".join(WordSet))
+	
+	TrainChineseWords()
 
 Main()

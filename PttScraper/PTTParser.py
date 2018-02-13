@@ -1,12 +1,13 @@
 from Article import *
 from Meta import *
+from Util import *
 
 def GetPreviousPageUrl(Root):
 	Path = '//div[@id="action-bar-container"]/div/div[2]/a[2]'
 	PreviousPageBtn = Root.xpath(Path)
 	if IsNullNode(PreviousPageBtn):
 		print("Error : previous page button not found!")
-		exit()
+		return "NOPREVPAGE"
 
 	return PreviousPageBtn[0].attrib['href']
 

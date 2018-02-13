@@ -1,6 +1,9 @@
 import re
 import os
 
+def ConvertStringToUTF8(InputStr):
+	return InputStr.encode("utf-8")
+
 def FilterPunctuation(InputStr):
 	return re.sub("[\s+\.\!\/_,$%^*(+\"\']+|[+——！，。？、~\[\]［］@#￥%……&*（）]+", "", InputStr)
 
@@ -12,5 +15,5 @@ def LoadStopWords(Path="./JiebaDict/StopWords.txt"):
 	StopWords = []
 	with open(Path, "r") as StopWordsFile:
 		StopWords = StopWordsFile.read().splitlines()
-		print(StopWords)
+		#print(StopWords)
 	return StopWords
