@@ -32,7 +32,3 @@ def TrainChineseWords(Dim=100, OutputFileName="CHTWord2VecModel.model", Pretrain
 	
 	return None
 
-def SentenceToVector(Sentence):
-	#TODO
-	return None
-

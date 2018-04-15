@@ -2,6 +2,23 @@ from Article import *
 from Meta import *
 from Util import *
 
+import time
+
+MONTHDICT = {
+	'Jan':1,
+	'Feb':2,
+	'Mar':3,
+	'Apr':4,
+	'May':5,
+	'Jun':6,
+	'Jul':7,
+	'Aug':8,
+	'Sep':9,
+	'Oct':10,
+	'Nov':11,
+	'Dec':12,
+}
+
 def GetPreviousPageUrl(Root):
 	Path = '//div[@id="action-bar-container"]/div/div[2]/a[2]'
 	PreviousPageBtn = Root.xpath(Path)
@@ -68,3 +85,14 @@ def ParseArticleContent(Root):
 	ArticleContentText = ArticleContentNode[0]
 
 	return ArticleContentText
+
+def ParseDetailedPostDate(Root):
+	Path = '//div[@id="main-content"]/div[@class="article-metaline"][3]/span[@class="article-meta-value"]/text()'
+	DetailedPostDateNode = Root.xpath(Path)
+	if IsNullNode(DetailedPostDateNode):
+		return None
+
+	DetailedPostDate = time.strptime(DetailedPostDateNode[0], '%a %b %d %H:%M:%S %Y')
+	
+	return DetailedPostDate
+
